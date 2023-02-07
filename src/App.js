@@ -26,9 +26,8 @@ function App() {
         board[i][j] = null;
       }
     }
-    setBoard(board, () => {
-      this.forceUpdate();
-      });
+    setBoard(board);
+      
 
     setIsWin(false);
   };
