@@ -17,7 +17,7 @@ function App() {
   const [currentPlayer, setCurrentPlayer] = useState('red');
   const [redWins, setRedWins] = useState(0);
   const [yellowWins, setYellowWins] = useState(0);
-  const [isWin, setIsWin] = useState(false);
+  const [isWin, setIsWin] = useState(null);
 
   const resetBoard = (board) => {
 
@@ -29,12 +29,12 @@ function App() {
     setBoard(board);
       
 
-    setIsWin(false);
+    setIsWin(null);
   };
 
   const handleClick = (columnIndex) => {
     const newBoard = [...board]; 
-    if(isWin){
+    if(isWin === 'red' || isWin === 'yellow' || isWin === 'tie'){
       resetBoard(board);
     } else {
       for (let rowIndex = 5; rowIndex >= 0; rowIndex--) {
@@ -42,6 +42,9 @@ function App() {
           newBoard[rowIndex][columnIndex] = currentPlayer;
           setBoard(newBoard);
           checkForWin(newBoard, rowIndex, columnIndex, currentPlayer);
+          if (isWin == null) {
+            checkForTie(newBoard);
+          }
           setCurrentPlayer(currentPlayer === 'red' ? 'yellow' : 'red');
           break;
         }
@@ -68,7 +71,7 @@ function App() {
                   setYellowWins(yellowWins + 1);
                                 
                 }
-                setIsWin(true);
+                setIsWin(currentPlayer);
                 return;
           }
           // Check vertical win
@@ -83,7 +86,7 @@ function App() {
                   setYellowWins(yellowWins + 1);
                                 
                 }
-                setIsWin(true);
+                setIsWin(currentPlayer);
                 return;
                 
               }
@@ -99,7 +102,7 @@ function App() {
                       setYellowWins(yellowWins + 1);
                                     
                     }
-                    setIsWin(true);
+                    setIsWin(currentPlayer);
                     return;
                     
               }
@@ -115,13 +118,25 @@ function App() {
                   setYellowWins(yellowWins + 1);
                                 
                 }
-                setIsWin(true);
+                setIsWin(currentPlayer);
                 return;
                   
             }
           }
         }
       }
+    };
+
+    const checkForTie = (board) => {
+      for (let rowIndex = 0; rowIndex < 6; rowIndex++) {
+        for (let columnIndex = 0; columnIndex < 7; columnIndex++) {
+          if (!board[rowIndex][columnIndex]) {
+            return false;
+          }
+        }
+      }
+      setIsWin('tie');
+      // display message for tie game
     };
 
   return (
@@ -146,9 +161,13 @@ function App() {
           ))}
         </tbody>
       </table>
-        {isWin ?(
+        {isWin === 'red' || isWin === 'yellow' ? (
         <div className="win-message">
-          {redWins > yellowWins ? "Red Wins!" : "Yellow Wins!"}
+          {isWin === 'red' ? "Red Wins!" : "Yellow Wins!"}
+        </div> ) : null}
+        {isWin === 'tie' ? (
+        <div className="win-message">
+          Tie game!
         </div> ) : null}
       <div className="scoreboard">
         <div className='game-info'>
